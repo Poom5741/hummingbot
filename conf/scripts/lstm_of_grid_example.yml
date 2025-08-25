@@ -1,0 +1,78 @@
+########################################################
+###        LSTM-assisted Grid Trading Config        ###
+########################################################
+
+# To switch exchanges, simply replace the name below with
+# a compatible connector like "binance", "kucoin", or
+# use a futures connector such as "binance_perpetual" when
+# trading derivatives.
+exchange: binance
+
+# Base-quote pair to trade. Ensure the pair exists on the
+# selected exchange. Example: ETH-USDC, BTC-USDT.
+trading_pair: BTC-USDT
+
+# Timeframes used by the model and grid. The model pulls
+# training candles at the data timeframe, while grid orders
+# run at the execution timeframe.
+data_timeframe: 1m
+execution_timeframe: 1m
+
+# -----------------------------------------------------------------
+# Model settings
+# -----------------------------------------------------------------
+# Number of past candles fed into the LSTM.
+lookback_window: 60
+# Forecast horizon produced by the model, in candles.
+prediction_window: 1
+# Depth and capacity of the network.
+lstm_layers: 2
+lstm_units: 128
+# Dropout rate for regularisation (0-1).
+dropout: 0.2
+# How frequently (in seconds) to retrain/update the model.
+model_update_interval: 3600
+
+# -----------------------------------------------------------------
+# Grid controls
+# -----------------------------------------------------------------
+# Percentage above current price for the top grid level.
+grid_price_ceiling_pct: 0.02
+# Percentage below current price for the bottom grid level.
+grid_price_floor_pct: -0.02
+# Number of buy and sell levels to create.
+grid_levels: 5
+# Percentage spacing between successive grid levels.
+grid_spacing_pct: 0.5
+
+# -----------------------------------------------------------------
+# Order-flow gates
+# -----------------------------------------------------------------
+# Toggle to enable placement of buy or sell orders individually.
+enable_buy_orders: true
+enable_sell_orders: true
+# Seconds before existing grid orders are refreshed.
+order_refresh_time: 120
+
+# -----------------------------------------------------------------
+# Risk and sizing
+# -----------------------------------------------------------------
+# Amount of base asset per order.
+order_amount: 0.001
+# Maximum number of active grid orders at any time.
+max_active_orders: 10
+# Hard cap on the net base asset position.
+max_position_size: 0.01
+
+# -----------------------------------------------------------------
+# Futures options
+# -----------------------------------------------------------------
+# Set to true to engage futures trading.
+use_futures: false
+# Applied leverage when trading futures; ignored for spot.
+leverage: 1
+# Margin mode: "cross" shares collateral across positions,
+# while "isolated" restricts risk to each position.
+cross_isolated: cross
+# Position mode for futures connectors: "oneway" or "both" (hedge).
+position_mode: both
